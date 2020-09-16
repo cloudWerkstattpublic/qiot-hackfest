@@ -12,8 +12,8 @@ app = Flask(__name__)
 pms5003 = PMS5003()
 time.sleep(1.0)
 
-@app.route("/polution")
-def readPolution():
+@app.route("/pollution")
+def readPollution():
     global pms5003
     try:
         sensor_values = pms5003.read()
