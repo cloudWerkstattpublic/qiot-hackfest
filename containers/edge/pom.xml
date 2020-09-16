@@ -1,0 +1,125 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.cloudwerkstatt.qiot-hackfest</groupId>
+	<artifactId>edge-service</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<properties>
+		<camel.quarkus.version>1.1.0</camel.quarkus.version>
+		<quarkus.version>1.8.0.Final</quarkus.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- Import BOM -->
+			<dependency>
+				<groupId>org.apache.camel.quarkus</groupId>
+				<artifactId>camel-quarkus-bom</artifactId>
+				<version>${camel.quarkus.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.camel.quarkus</groupId>
+			<artifactId>camel-quarkus-main</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel.quarkus</groupId>
+			<artifactId>camel-quarkus-timer</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel.quarkus</groupId>
+			<artifactId>camel-quarkus-log</artifactId>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.apache.camel.quarkus</groupId>
+			<artifactId>camel-quarkus-http</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel.quarkus</groupId>
+			<artifactId>camel-quarkus-paho</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel.quarkus</groupId>
+			<artifactId>camel-quarkus-jackson</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.camel.quarkus</groupId>
+			<artifactId>camel-quarkus-direct</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.2.0</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<!-- here the phase you need -->
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>/tmp</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/resources/security</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>io.quarkus</groupId>
+				<artifactId>quarkus-maven-plugin</artifactId>
+				<version>${quarkus.version}</version>
+				<executions>
+					<execution>
+						<id>build</id>
+						<goals>
+							<goal>build</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- <plugin> <groupId>org.openapitools</groupId> <artifactId>openapi-generator-maven-plugin</artifactId> 
+				<version>4.3.1</version> <executions> <execution> <goals> <goal>generate</goal> 
+				</goals> <configuration> <inputSpec>${project.basedir}/src/main/resources/api.yaml</inputSpec> 
+				<skipValidateSpec>true</skipValidateSpec> <generatorName>java</generatorName> 
+				<configOptions> <sourceFolder>src/gen/java/main</sourceFolder> </configOptions> 
+				</configuration> </execution> </executions> </plugin> -->
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>native</id>
+			<activation>
+				<property>
+					<name>native</name>
+				</property>
+			</activation>
+			<properties>
+				<quarkus.package.type>native</quarkus.package.type>
+			</properties>
+		</profile>
+	</profiles>
+</project>

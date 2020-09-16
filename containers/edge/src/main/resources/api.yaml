@@ -1,0 +1,114 @@
+openapi: 3.0.1
+info:
+  title: Generated API
+  version: "1.0"
+paths: 
+  /register/id/{id}:
+  delete:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          format: int32
+          type: integer
+    responses:
+      "204":
+        description: No Content
+  /register/serial/{serial}/name/{name}/longitude/{longitude}/latitude/{latitude}:
+    put:
+      parameters:
+      - name: latitude
+        in: path
+        required: true
+        schema:
+          format: double
+          type: number
+      - name: longitude
+        in: path
+        required: true
+        schema:
+          format: double
+          type: number
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: serial
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                format: int32
+                type: integer
+components:
+  schemas:
+    MeasurementStation:
+      type: object
+      properties:
+        active:
+          type: boolean
+        id:
+          format: int32
+          type: integer
+        location:
+          $ref: '#/components/schemas/Point'
+        name:
+          type: string
+        serial:
+          type: string
+    SetMeasurementStation:
+      uniqueItems: true
+      type: array
+      items:
+        $ref: '#/components/schemas/MeasurementStation'
+    Point:
+      type: object
+      properties:
+        coordinateReferenceSystem:
+          $ref: '#/components/schemas/CoordinateReferenceSystem'
+        coordinate:
+          $ref: '#/components/schemas/Position'
+        coordinates:
+          $ref: '#/components/schemas/Position'
+        position:
+          $ref: '#/components/schemas/Position'
+        type:
+          $ref: '#/components/schemas/GeoJsonObjectType'
+    CoordinateReferenceSystem:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/CoordinateReferenceSystemType'
+    Position:
+      type: object
+      properties:
+        values:
+          $ref: '#/components/schemas/ListDouble'
+    GeoJsonObjectType:
+      enum:
+      - GEOMETRY_COLLECTION
+      - LINE_STRING
+      - MULTI_LINE_STRING
+      - MULTI_POINT
+      - MULTI_POLYGON
+      - POINT
+      - POLYGON
+      type: string
+    ListDouble:
+      type: array
+      items:
+        format: double
+        type: number
+    CoordinateReferenceSystemType:
+      enum:
+      - LINK
+      - NAME
+      type: string
