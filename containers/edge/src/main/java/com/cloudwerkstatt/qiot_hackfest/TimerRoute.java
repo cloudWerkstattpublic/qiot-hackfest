@@ -2,13 +2,26 @@ package com.cloudwerkstatt.qiot_hackfest;
 
 import java.net.URL;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import com.cloudwerkstatt.qiot_hackfest.model.Gas;
 import com.cloudwerkstatt.qiot_hackfest.model.Pollution;
 
+@ApplicationScoped
 public class TimerRoute extends RouteBuilder {
+	@ConfigProperty(name = "url.registration.base", defaultValue="http://qiot-registration-qiot.apps.cluster-emeaiot-d864.emeaiot-d864.example.opentlc.com/v1")
+	private String baseRegistrationUrl;
+
+	@ConfigProperty(name = "url.sensor.gas", defaultValue="http://localhost:5000/gas")
+	private String gasSensorBaseUrl;
+
+	@ConfigProperty(name = "url.sensor.pollution", defaultValue="http://localhost:5000/pollution")
+	private String pollutionSensorBaseUrl;
+
 	public static final String DEVICE_ID = "com.cloudwerkstatt.qiot_hackfest.DEVICE_ID";
 
 	@Override
@@ -24,7 +37,7 @@ public class TimerRoute extends RouteBuilder {
 			.routeId("gasTelemetry")
 		
 			.log("Read sensor values")
-			.toD(Properties.GAS_SENSOR_URL + "?httpMethod=GET")
+			.toD(gasSensorBaseUrl + "?httpMethod=GET")
 			.convertBodyTo(String.class)
 			.log("Read sensor values: ${body}")
 	
@@ -50,7 +63,7 @@ public class TimerRoute extends RouteBuilder {
 			.routeId("pollutionTelemetry")
 
 			.log("Read sensor values")
-			.toD(Properties.POLLUTION_SENSOR_URL + "?httpMethod=GET")
+			.toD(pollutionSensorBaseUrl + "?httpMethod=GET")
 			.convertBodyTo(String.class)
 			.log("Read sensor values: ${body}")
 	
@@ -82,8 +95,8 @@ public class TimerRoute extends RouteBuilder {
 			.choice()
 				.when(systemProperty(DEVICE_ID).isNull())
 				.log("Fetching id")
-				.process(new PrepareRegistrationProcessor())
-				.toD(Properties.REGISTRATION_BASE_URL + "/register/serial/${header.serial}/name/${header.name}/longitude/${header.longitude}/latitude/${header.latitude}?httpMethod=PUT")
+				.bean(PrepareRegistrationProcessor.class)
+				.toD(baseRegistrationUrl + "/register/serial/${header.serial}/name/${header.name}/longitude/${header.longitude}/latitude/${header.latitude}?httpMethod=PUT")
 				.process(new RegistrationProcessor())
 				.end()
 			.log("Device ID: ${sys."+DEVICE_ID+"}")
