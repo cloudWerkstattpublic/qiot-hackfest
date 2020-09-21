@@ -20,7 +20,7 @@ public class PrepareRegistrationProcessor implements Processor {
 		if(f.exists() && f.canRead()) {
 			List<String> lines = Files.readAllLines(f.toPath());
 			if(lines.size() > 0) {
-				serial = lines.get(0);
+				serial = lines.get(0).trim();
 			}
 		}
 		
