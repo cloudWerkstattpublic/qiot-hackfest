@@ -15,13 +15,13 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @Named("PrepareRegistrationBean")
 public class PrepareRegistrationProcessor implements Processor {
 	@ConfigProperty(name = "name", defaultValue="raspyEnviro")
-	String name;
+	protected String name;
 
 	@ConfigProperty(name = "longitude", defaultValue="11.403468")
-	String longitude;
+	protected String longitude;
 
 	@ConfigProperty(name = "latitude", defaultValue="48.766744")
-	String latitude;
+	protected String latitude;
 
 	public void process(Exchange exchange) throws Exception {
 		// Default values
@@ -39,6 +39,30 @@ public class PrepareRegistrationProcessor implements Processor {
 		exchange.getIn().setHeader("serial", serial);
 		exchange.getIn().setHeader("longitude", longitude);
 		exchange.getIn().setHeader("latitude", latitude);
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getLongitude() {
+		return longitude;
+	}
+	
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
+	}
+	
+	public String getLatitude() {
+		return latitude;
+	}
+	
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
 	}
 	
 }

@@ -14,13 +14,13 @@ import com.cloudwerkstatt.qiot_hackfest.model.Pollution;
 @ApplicationScoped
 public class TimerRoute extends RouteBuilder {
 	@ConfigProperty(name = "url.registration.base", defaultValue="http://qiot-registration-qiot.apps.cluster-emeaiot-d864.emeaiot-d864.example.opentlc.com/v1")
-	private String baseRegistrationUrl;
+	protected String baseRegistrationUrl;
 
 	@ConfigProperty(name = "url.sensor.gas", defaultValue="http://localhost:5000/gas")
-	private String gasSensorBaseUrl;
+	protected String gasSensorBaseUrl;
 
 	@ConfigProperty(name = "url.sensor.pollution", defaultValue="http://localhost:5000/pollution")
-	private String pollutionSensorBaseUrl;
+	protected String pollutionSensorBaseUrl;
 
 	public static final String DEVICE_ID = "com.cloudwerkstatt.qiot_hackfest.DEVICE_ID";
 
@@ -106,4 +106,27 @@ public class TimerRoute extends RouteBuilder {
 			;
 	}
 	
+	public String getBaseRegistrationUrl() {
+		return baseRegistrationUrl;
+	}
+	
+	public void setBaseRegistrationUrl(String baseRegistrationUrl) {
+		this.baseRegistrationUrl = baseRegistrationUrl;
+	}
+	
+	public String getGasSensorBaseUrl() {
+		return gasSensorBaseUrl;
+	}
+	
+	public void setGasSensorBaseUrl(String gasSensorBaseUrl) {
+		this.gasSensorBaseUrl = gasSensorBaseUrl;
+	}
+	
+	public String getPollutionSensorBaseUrl() {
+		return pollutionSensorBaseUrl;
+	}
+	
+	public void setPollutionSensorBaseUrl(String pollutionSensorBaseUrl) {
+		this.pollutionSensorBaseUrl = pollutionSensorBaseUrl;
+	}
 }
