@@ -23,10 +23,10 @@ public class PrepareRegistrationProcessor implements Processor {
 	@ConfigProperty(name = "latitude", defaultValue="48.766744")
 	protected String latitude;
 
+	@ConfigProperty(name = "serial", defaultValue="0000000066495444")
+	protected String serial;
+
 	public void process(Exchange exchange) throws Exception {
-		// Default values
-		String serial = "0000000066495444";
-		
 		File f = new File("/proc/device-tree/serial-number");
 		if(f.exists() && f.canRead()) {
 			List<String> lines = Files.readAllLines(f.toPath());
