@@ -135,7 +135,7 @@ func getPollutionSensorValues() Pollution {
 		BaudRate:        9600,
 		DataBits:        8,
 		StopBits:        1,
-		MinimumReadSize: 4,
+		MinimumReadSize: 30,
 	}
 
 	port, err := serial.Open(options)
