@@ -43,52 +43,52 @@ public class Pollution {
 		this.instant = instant;
 	}
 
-	public int getpm1_0() {
+	public int getPm1_0() {
 		return pm1_0;
 	}
 
-	public void setpm1_0(int pm1_0) {
-		pm1_0 = pm1_0;
+	public void setPm1_0(int pm1_0) {
+		this.pm1_0 = pm1_0;
 	}
 
-	public int getpm2_5() {
+	public int getPm2_5() {
 		return pm2_5;
 	}
 
-	public void setpm2_5(int pm2_5) {
-		pm2_5 = pm2_5;
+	public void setPm2_5(int pm2_5) {
+		this.pm2_5 = pm2_5;
 	}
 
-	public int getpm10() {
+	public int getPm10() {
 		return pm10;
 	}
 
-	public void setpm10(int pm10) {
-		pm10 = pm10;
+	public void setPm10(int pm10) {
+		this.pm10 = pm10;
 	}
 
-	public int getpm1_0_atm() {
+	public int getPm1_0_atm() {
 		return pm1_0_atm;
 	}
 
-	public void setpm1_0_atm(int pm1_0_atm) {
-		pm1_0_atm = pm1_0_atm;
+	public void setPm1_0_atm(int pm1_0_atm) {
+		this.pm1_0_atm = pm1_0_atm;
 	}
 
-	public int getpm2_5_atm() {
+	public int getPm2_5_atm() {
 		return pm2_5_atm;
 	}
 
-	public void setpm2_5_atm(int pm2_5_atm) {
-		pm2_5_atm = pm2_5_atm;
+	public void setPm2_5_atm(int pm2_5_atm) {
+		this.pm2_5_atm = pm2_5_atm;
 	}
 
-	public int getpm10_atm() {
+	public int getPm10_atm() {
 		return pm10_atm;
 	}
 
-	public void setpm10_atm(int pm10_atm) {
-		pm10_atm = pm10_atm;
+	public void setPm10_atm(int pm10_atm) {
+		this.pm10_atm = pm10_atm;
 	}
 
 	public int getGt0_3um() {
