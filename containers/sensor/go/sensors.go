@@ -14,6 +14,8 @@ import (
 	i2c "github.com/d2r2/go-i2c"
 
 	"github.com/jacobsa/go-serial/serial"
+
+	"github.com/d2r2/go-bsbmp"
 )
 
 const ads1015Address = 0x49
@@ -49,6 +51,13 @@ type Pollution struct {
 	GT2_5UM   uint16 `json:"gt2_5um"`
 	GT5_0UM   uint16 `json:"gt5_0um"`
 	GT10UM    uint16 `json:"gt10um"`
+}
+
+type Weather struct {
+	Temperature 	float32
+	Humidity	float32
+	Pressure	float32
+	Altitude	float32
 }
 
 func getGasSensorValue(channel uint16) uint16 {
@@ -208,6 +217,52 @@ func getPollutionSensorValues() Pollution {
 	return pollution
 }
 
+func getWeatherSensorValues() Weather {
+	i2c, err := i2c.NewI2C(0x76, 1)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer i2c.Close()
+
+	sensor, err := bsbmp.NewBMP(bsbmp.BME280, i2c)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	t, err := sensor.ReadTemperatureC(bsbmp.ACCURACY_STANDARD)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Temperature = %v*C\n", t)
+	
+	_, h, err := sensor.ReadHumidityRH(bsbmp.ACCURACY_STANDARD)
+	if err != nil {
+                log.Fatal(err)
+        }
+        log.Printf("Humidity = %v%\n", h)
+
+	p, err := sensor.ReadPressurePa(bsbmp.ACCURACY_STANDARD)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Pressure = %v Pa\n", p)
+	
+	a, err := sensor.ReadAltitude(bsbmp.ACCURACY_STANDARD)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Altitude = %v m\n", a)
+
+	weather := Weather{}
+
+	weather.Temperature = t
+	weather.Humidity = h
+	weather.Pressure = p
+	weather.Altitude = a
+
+	return weather
+}
+
 func gasSensorHandler(w http.ResponseWriter, r *http.Request) {
 	defer reset()
 
@@ -244,9 +299,28 @@ func pollutionSensorHandler(w http.ResponseWriter, r *http.Request) {
 	}()
 }
 
+func weatherSensorHandler(w http.ResponseWriter, r *http.Request) {
+	defer reset()
+
+	func() {
+	        mutex.Lock()
+
+	        json, err := json.Marshal(getWeatherSensorValues())
+	        if err != nil {
+	                log.Printf("Error marshaling weather sensor values %v", err)
+	        } else {
+	                log.Printf("Marshalled weather sensor values: %v", string(json))
+	                fmt.Fprintf(w, string(json))
+	        }
+
+        	mutex.Unlock()
+	}()
+}
+
 func main() {
 	http.HandleFunc("/gas", gasSensorHandler)
 	http.HandleFunc("/pollution", pollutionSensorHandler)
+	http.HandleFunc("/weather", weatherSensorHandler)
 
 	log.Printf("Starting server at port 5050\n")
 	if err := http.ListenAndServe(":5050", nil); err != nil {
