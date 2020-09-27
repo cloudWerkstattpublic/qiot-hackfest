@@ -9,6 +9,8 @@ import (
 	"log"
 	"net/http"
 
+        "sync"
+
 	i2c "github.com/d2r2/go-i2c"
 
 	"github.com/jacobsa/go-serial/serial"
@@ -19,6 +21,13 @@ const ads1015Address = 0x49
 const ox uint16 = 0b100  // in0/gnd
 const red uint16 = 0b101 // in1/gnd
 const nh3 uint16 = 0b110 // in2/gnd
+
+var mutex = &sync.Mutex{}
+
+func reset() {
+	mutex.Lock()
+	defer mutex.Unlock()
+}
 
 type Gas struct {
 	OX  float32 `json:"oxidising"`
@@ -200,23 +209,39 @@ func getPollutionSensorValues() Pollution {
 }
 
 func gasSensorHandler(w http.ResponseWriter, r *http.Request) {
-	json, err := json.Marshal(getGasSensorValues())
-	if err != nil {
-		log.Printf("Error marshaling gas sensor values %v", err)
-		return
-	}
-	log.Printf("Marshalled gas sensor values: %v", string(json))
-	fmt.Fprintf(w, string(json))
+	defer reset()
+
+	func() {
+		mutex.Lock()
+
+		json, err := json.Marshal(getGasSensorValues())
+		if err != nil {
+			log.Printf("Error marshaling gas sensor values %v", err)
+		} else {
+			log.Printf("Marshalled gas sensor values: %v", string(json))
+			fmt.Fprintf(w, string(json))
+		}
+
+		mutex.Unlock()
+	}()
 }
 
 func pollutionSensorHandler(w http.ResponseWriter, r *http.Request) {
-	json, err := json.Marshal(getPollutionSensorValues())
-	if err != nil {
-		log.Printf("Error marshaling pollution sensor values %v", err)
-		return
-	}
-	log.Printf("Marshalled pollution sensor values: %v", string(json))
-	fmt.Fprintf(w, string(json))
+	defer reset()
+
+	func() {
+		mutex.Lock()
+
+		json, err := json.Marshal(getPollutionSensorValues())
+		if err != nil {
+			log.Printf("Error marshaling pollution sensor values %v", err)
+		} else {
+			log.Printf("Marshalled pollution sensor values: %v", string(json))
+			fmt.Fprintf(w, string(json))
+		}
+
+		mutex.Unlock()
+	}()
 }
 
 func main() {
